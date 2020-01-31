@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import JokeCard from "./jokeCard";
 
 export default function Jokes(props) {
-  const [jokes, setJokes] = useState({});
+  const [jokes, setJokes] = useState([]);
 
   const handleClick = e => {
     axios
-      .get("http://localhost:3300/api/auth/jokes", {
+      .get("http://localhost:3300/api/jokes", {
         headers: {
           Authorization: props.token
         }
       })
       .then(jokes => {
-        console.log(jokes);
-        setJokes(jokes);
+        setJokes(jokes.data);
+        console.log(jokes.data);
       })
       .catch(error => {
         alert(`:-( Sorry no jokes for you!`);
@@ -23,7 +24,18 @@ export default function Jokes(props) {
 
   return (
     <div className="signup-container">
-      <button onClick={handleClick}>Where are the Jokes at?</button>
+      <h3>My Jokes</h3>
+      {jokes.length === 0 ? (
+        <button onClick={handleClick}>Where are the Jokes at?</button>
+      ) : (
+        jokes.map((curr, index) => {
+          return (
+            <div key={index}>
+              <JokeCard curr={curr} index={index} />
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
